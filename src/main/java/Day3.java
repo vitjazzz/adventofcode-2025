@@ -7,6 +7,8 @@ import utils.HttpInputFetcher;
 
 public class Day3 {
 
+    private static final int MAX_NUMBERS = 12;
+
     private static final String URL = "https://adventofcode.com/2025/day/3/input";
     private static final String TEST_DATA = """
             987654321111111
@@ -20,24 +22,22 @@ public class Day3 {
     public static void execute() {
 //        var ranges = rangesFromTestData();
         var ranges = rangesFromUrl();
-        var res = 0;
+        var res = 0L;
         for (List<Integer> range : ranges) {
-            int largestLeftIndex = 0;
-            int largestLeftValue = 0;
-            for (int i = 0; i < range.size() - 1; i++) {
-                if (range.get(i) > largestLeftValue) {
-                    largestLeftValue = range.get(i);
-                    largestLeftIndex = i;
+            var joltageStr = "";
+            int largestLeftIndex = -1;
+            for (int i = MAX_NUMBERS; i > 0; i--) {
+                long largestValue = 0;
+                for (int j = largestLeftIndex + 1; j < range.size() - i + 1; j++) {
+                    if (range.get(j) > largestValue) {
+                        largestValue = range.get(j);
+                        largestLeftIndex = j;
+                    }
                 }
+                joltageStr += largestValue;
             }
-            int largestRightValue = 0;
-            for (int i = largestLeftIndex + 1; i < range.size(); i++) {
-                if (range.get(i) > largestRightValue) {
-                    largestRightValue = range.get(i);
-                }
-            }
-            var joltageStr = String.valueOf(largestLeftValue) + largestRightValue;
-            var joltage = Integer.parseInt(joltageStr);
+
+            var joltage = Long.parseLong(joltageStr);
             res += joltage;
         }
         System.out.println(res);
