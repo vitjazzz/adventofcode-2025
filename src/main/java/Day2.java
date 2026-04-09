@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import utils.EnvLoader;
@@ -12,27 +13,36 @@ public class Day2 {
             "824824821-824824827,2121212118-2121212124";
 
     // wrongs pt.1:
-    // wrongs pt.2:
+    // wrongs pt.2: 31680313979
     public static void execute() {
 //        var ranges = rangesFromTestData();
         var ranges = rangesFromUrl();
         long fakeIdsSum = 0;
         for (Range range : ranges) {
+            var currentRangeFakeIds = new HashSet<Long>();
             var fromLong = Long.parseLong(range.from);
             var toLong = Long.parseLong(range.to);
-            var closestHalf = range.from.length() % 2 == 0
-                    ? range.from.substring(0, range.from.length() / 2)
-                    : "1" + "0".repeat(range.from.length() / 2);
-            var closestHalfLong = Long.parseLong(closestHalf);
+            var toLength = range.to.length();
+            var part = 1;
             while (true) {
-                var fakeId = String.valueOf(closestHalfLong) + closestHalfLong;
-                var fakeIdLong = Long.parseLong(fakeId);
-                if (fakeIdLong > toLong) {
-                    break;
-                } else if (fakeIdLong >= fromLong) {
-                    fakeIdsSum += fakeIdLong;
+                var partStr = String.valueOf(part);
+                for (int i = 2; i <= toLength; i++) {
+                    var fakeId = partStr.repeat(i);
+                    if (fakeId.length() > toLength) {
+                        continue;
+                    }
+                    var fakeIdLong = Long.parseLong(fakeId);
+                    if (fakeIdLong >= fromLong
+                            && fakeIdLong <= toLong
+                            && !currentRangeFakeIds.contains(fakeIdLong)) {
+                        fakeIdsSum += fakeIdLong;
+                        currentRangeFakeIds.add(fakeIdLong);
+                    }
                 }
-                closestHalfLong++;
+                if (Long.parseLong(partStr.repeat(2)) > toLong) {
+                    break;
+                }
+                part++;
             }
         }
         System.out.println(fakeIdsSum);
