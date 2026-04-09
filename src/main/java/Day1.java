@@ -19,15 +19,12 @@ public class Day1 {
             L82
             """;
 
-    // wrongs: 43, 47
+    // wrongs pt.1: 43, 47
+    // wrongs pt.2: 4522, 58303, 6491, 6928
     public static void execute() {
-
-//        System.out.println(-101 % 100);
-//        if (true) {
-//            return;
-//        }
 //        var lines = linesFromTestData();
         var lines = linesFromUrl();
+        int prevPos = 50;
         int pos = 50;
         int zeroes = 0;
         for (String line : lines) {
@@ -35,13 +32,18 @@ public class Day1 {
             var step = Integer.parseInt(line.substring(1));
             pos += step * direction;
             if (pos > 99) {
+                zeroes += pos / 100;
                 pos = pos % 100;
             } else if (pos < 0) {
+                if (prevPos != 0) {
+                    zeroes += 1;
+                }
+                zeroes += Math.abs(pos / 100);
                 pos = (100 + (pos % 100)) % 100;
+            } else if (pos == 0) {
+                 zeroes += 1;
             }
-            if (pos == 0) {
-                zeroes++;
-            }
+            prevPos = pos;
         }
 
         System.out.println("Zeroes - " + zeroes);
