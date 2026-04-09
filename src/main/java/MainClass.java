@@ -1,7 +1,7 @@
 public class MainClass {
 
     public static void main(String[] args) {
-       Day3.execute();
+       Day4.execute();
     }
 
 }
