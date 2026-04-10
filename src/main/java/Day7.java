@@ -27,39 +27,39 @@ public class Day7 {
 
 
     // wrongs pt.1:
-    // wrongs pt.2:
+    // wrongs pt.2: 3178, 1764
     public static void execute() {
-        var lines = linesFromTestData();
-//        var lines = linesFromUrl();
+//        var lines = linesFromTestData();
+        var lines = linesFromUrl();
         char[][] grid = parseGrid(lines);
         Point start = findStart(grid);
-        int[][] counts = new int[grid.length][grid[0].length];
+        long[][] counts = new long[grid.length][grid[0].length];
 
-        System.out.println(calculateSplits(start, grid, counts));
+        System.out.println(calculateTimelines(start, grid, counts));
     }
 
 
-    private static int calculateSplits(Point p, char[][] grid, int[][] counts) {
+    private static long calculateTimelines(Point p, char[][] grid, long[][] counts) {
         if (p.j < 0 || p.j >= grid[0].length) {
             return 0;
         }
         int i = p.i;
         for (; i <= grid.length; i++) {
             if (i == grid.length) {
-                return 0;
+                return 1;
             }
             if (grid[i][p.j] == '^') {
                 break;
             }
         }
         if (counts[i][p.j] > 0) {
-            return counts[p.i][p.j];
+            return counts[i][p.j];
         }
-        int splits = 1
-                + calculateSplits(new Point(i, p.j - 1), grid, counts)
-                + calculateSplits(new Point(i, p.j + 1), grid, counts);
-        counts[i][p.j] = splits;
-        return splits;
+        long timelines = 0
+                + calculateTimelines(new Point(i, p.j - 1), grid, counts)
+                + calculateTimelines(new Point(i, p.j + 1), grid, counts);
+        counts[i][p.j] = timelines;
+        return timelines;
     }
 
     private static List<String> linesFromUrl() {
