@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import utils.EnvLoader;
 import utils.HttpInputFetcher;
@@ -16,30 +20,51 @@ public class Day5 {
             12-18
                        
             1
-            5
-            8
-            11
-            17
-            32
             """;
 
     // wrongs pt.1:
-    // wrongs pt.2:
+    // wrongs pt.2: 388947125157441
     public static void execute() {
+//        var lines = linesFromTestData();
         var lines = linesFromUrl();
         var input = parseInput(lines);
 
-        int freshIds = 0;
 
-        for (Long id : input.ids) {
-            for (Range range : input.ranges) {
-                if (id >= range.from && id <= range.to) {
-                    freshIds += 1;
+        var sortedRanges = input.ranges.stream()
+                .sorted(Comparator.comparingLong(o -> o.from))
+                .toList();
+        var mergedRanges = new LinkedList<Range>();
+        for (Range range : sortedRanges) {
+            for (Iterator<Range> it = mergedRanges.iterator(); it.hasNext();) {
+                var next = it.next();
+                if (range.from > next.to) {
+                    continue;
+                }
+                if (range.to < next.from) {
+                    System.out.println("Error!!!!!");
                     break;
                 }
+                it.remove();
+                range = new Range(Math.min(range.from, next.from), Math.max(range.to, next.to));
+            }
+            mergedRanges.add(range);
+        }
+
+        long freshIds = 0;
+        for (Range mergedRange : mergedRanges) {
+            freshIds += 1 + mergedRange.to - mergedRange.from;
+        }
+
+        System.out.println(freshIds);
+    }
+
+    private static Range findRange(List<Range> ranges, long point) {
+        for (var range : ranges) {
+            if (point >= range.from && point <= range.to) {
+                return range;
             }
         }
-        System.out.println(freshIds);
+        return null;
     }
 
 
